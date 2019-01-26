@@ -1,14 +1,21 @@
-.tile{
+.tile {
 	width: 80px;
 	height: 80px;
 	font-size: 60px;
 	font-family: Helvetica;
 }
 
-.gameBoard{
+.gameBoard {
 	display: none;
 }
 
-.center{
+.center {
 	margin: 0 auto;
+}
+
+.joinRoom {
+	margin-left: 20px;
+	height: auto;
+	line-height: 20px;
+	padding: 5px 15px;
 }

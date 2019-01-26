@@ -1,29 +1,57 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Tic Tac Toe</title>
+		<title>Double-Snake-Game</title>
 		<link rel="stylesheet" href="main.css">
 		<link rel="stylesheet" href="node_modules/skeleton-css/css/skeleton.css">
+		<style>
+			* { margin: 0; padding: 0; box-sizing: border-box; }
+			body { font: 13px Helvetica, Arial; }
+			form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+			form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+			form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+			#messages { list-style-type: none; margin: 0; padding: 0; }
+			#messages li { padding: 5px 10px; }
+			#messages li:nth-child(odd) { background: #eee; }
+		</style>
 	</head>
 	<body>
 		<div class="container">
-			<div class="menu">
+			<div id="home"> 
+					<h4>Create a new Game</h4>
+					<input type="text" name="name" class="nameNew" placeholder="Enter your name" required>
+					<button class="enter">Enter</button>	
+				<!--	<h2>Text field</h2>
+					<p>The <strong>input type="text"</strong> defines a one-line text input field:</p>
+							
+					<form action="/action_page.php">
+					First name:<br>
+					<input type="text" name="firstname">
+					<br>
+					<br>
+					<input type="submit">
+					</form>
+							
+					<p>Note that the form itself is not visible.</p>
+					<p>Also note that the default width of a text field is 20 characters.</p> -->					
+			</div>
+
+			<div id="lobby" style="display: none;">
 				<h1>Tic - Tac - Toe</h1>
 				<h3>How To Play</h3>
 				<ol>
-					<li>Player 1 Create a new game by entering the username</li>
+					<li>Player 1 Create a new game by entering the username </li>
 					<li>Player 2 Enter another username and the room id that is displayed on first window.</li>
 					<li>Click on join game. </li>
 				</ol>
 				<h4>Create a new Game</h4>
-				<input type="text" name="name" id="nameNew" placeholder="Enter your name" required>
-				<button id="new">New Game</button>
+				<button class="createRoom">New Game</button>
 				<br><br>
 				<h4>Join an existing game</h4>
-				<input type="text" name="name" id="nameJoin" placeholder="Enter your name" required>
-				<input type="text" name="room" id="room" placeholder="Enter Game ID" required>
-				<button id="join">Join Game</button>
+				<div class="rooms">
+				</div>
 			</div>
+
 			<div class="gameBoard" style="display: none;">
 				<h2 id="userHello"></h2>
 				<h3 id="turn"></h3>
@@ -45,9 +73,35 @@
 					</tr>
 				</table>
 			</div>
+
+			<!-- <div class = 'chat message' style="display: none;">
+					<ul id="messages"></ul>
+					<form action="">
+					<input id="m" autocomplete="off" /><button>Send</button>
+					</form>
+				
+					<script>
+					$(function () {
+						var socket = io();
+						$('form').submit(function(e){
+						e.preventDefault(); // prevents page reloading
+						socket.emit('chat message', $('#m').val());
+						$('#m').val('');
+						return false;
+						});
+						socket.on('chat message', function(msg){
+						$('#messages').append($('<li>').text(msg));
+						});
+						socket.on('error message',function(msg){
+						$('#messages').append($('<font color =  #FF0000>').text(msg));
+						})
+					});
+					</script>	
+			</div>  -->
 		</div>
 		<script src="node_modules/jquery/dist/jquery.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="main.js"></script>
+	
 	</body>
 </html>

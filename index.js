@@ -5,7 +5,8 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-let rooms = 0;
+let roomsCounter = 0;
+let rooms = [];
 
 app.use(express.static('.'));
 
@@ -14,15 +15,28 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+    console.log("connection established")
 
-    // Create a new game room and notify the creator of game.
+    socket.on('joinLobby', (data) => {
+        console.log("lobby joined");
+        socket.emit('updateRooms', {rooms: rooms});
+    });
+
     socket.on('createGame', (data) => {
-        socket.join(`room-${++rooms}`);
-        socket.emit('newGame', { name: data.name, room: `room-${rooms}` });
+        console.log("game created " + data.name)
+        const roomName = `room-${roomsCounter}`;
+        rooms.push(roomName)
+        socket.join(`room-${++roomsCounter}`);
+        socket.emit('newGame', { name: data.name, room: roomName});
     });
 
     // Connect the Player 2 to the room he requested. Show error if room full.
     socket.on('joinGame', function (data) {
+        socket.join(data.room);
+        socket.broadcast.to(data.room).emit('player1', {});
+        socket.emit('player2', { name: data.name, room: data.room })
+    });
+    /*socket.on('joinGame', function (data) {
         var room = io.nsps['/'].adapter.rooms[data.room];
         if (room && room.length === 1) {
             socket.join(data.room);
@@ -31,8 +45,7 @@ io.on('connection', (socket) => {
         } else {
             socket.emit('err', { message: 'Sorry, The room is full!' });
         }
-    });
-
+    });*/
     /**
        * Handle the turn played by either player and notify the other.
        */
@@ -43,11 +56,18 @@ io.on('connection', (socket) => {
         });
     });
 
+    /*socket.on('joinServer', (data) => {
+       
+    });*/
     /**
        * Notify the players about the victor.
        */
     socket.on('gameEnded', (data) => {
         socket.broadcast.to(data.room).emit('gameEnd', data);
+    });
+
+    socket.on('chat message', function(msg){
+        io.emit('chat message', msg);
     });
 });
 

@@ -6,7 +6,7 @@
 
   // const socket = io.connect('http://tic-tac-toe-realtime.herokuapp.com'),
   const socket = io.connect('http://localhost:5000');
-
+  
   class Player {
     constructor(name, type) {
       this.name = name;
@@ -22,20 +22,28 @@
     // Set the bit of the move played by the player
     // tileValue - Bitmask used to set the recently played move.
     updatePlaysArr(tileValue) {
+      console.log("movment: ") 
+      console.log(titleValue)
       this.playsArr += tileValue;
     }
 
     getPlaysArr() {
       return this.playsArr;
     }
+    /*setPlayerName() {
+      return this.name;
+    }*/
 
+    setPlayerType(type) {
+      this.type = type;
+    }
     // Set the currentTurn for player to turn and update UI to reflect the same.
     setCurrentTurn(turn) {
       this.currentTurn = turn;
       const message = turn ? 'Your turn' : 'Waiting for Opponent';
       $('#turn').text(message);
     }
-
+    
     getPlayerName() {
       return this.name;
     }
@@ -62,6 +70,7 @@
       function tileClickHandler() {
         const row = parseInt(this.id.split('_')[1][0], 10);
         const col = parseInt(this.id.split('_')[1][1], 10);
+        console.log("we are updating on: " + row + "|"+ col)
         if (!player.getCurrentTurn() || !game) {
           alert('Its not your turn!');
           return;
@@ -77,6 +86,9 @@
         game.updateBoard(player.getPlayerType(), row, col, this.id);
 
         player.setCurrentTurn(false);
+        console.log("current player name and type: " + player.name + " " + player.type)
+        console.log("current player game array: "+ player.getPlaysArr())
+        //titleValue = 1 << ((row * 3) + col);
         player.updatePlaysArr(1 << ((row * 3) + col));
 
         game.checkWinner();
@@ -91,10 +103,14 @@
     }
     // Remove the menu from DOM, display the gameboard and greet the player.
     displayBoard(message) {
-      $('.menu').css('display', 'none');
+      $('#lobby').css('display', 'none');
       $('.gameBoard').css('display', 'block');
       $('#userHello').html(message);
       this.createGameBoard();
+    }
+
+    displayMenu(message) {
+      $('.menu').css('display', 'block')
     }
     /**
      * Update game board UI
@@ -190,31 +206,48 @@
     }
   }
 
-  // Create a new game. Emit newGame event.
-  $('#new').on('click', () => {
-    const name = $('#nameNew').val();
+  // submit nick and enter into server
+  $('#home > .enter').on('click', () => {
+    console.log("jest click")
+    const name = $('#home > .nameNew').val();
     if (!name) {
       alert('Please enter your name.');
       return;
     }
-    socket.emit('createGame', { name });
+    socket.emit('joinLobby');
+    $('#lobby').css('display', 'block');
+    $('#home').css('display', 'none');
     player = new Player(name, P1);
   });
 
+  // Create a new game. Emit newGame event.
+  $('#lobby .createRoom').on('click', () => {
+    console.log("game created by: "+ player.name )
+    socket.emit('createGame',  player );
+    //player = new Player(name, P1);
+  });
+
   // Join an existing game on the entered roomId. Emit the joinGame event.
-  $('#join').on('click', () => {
-    const name = $('#nameJoin').val();
-    const roomID = $('#room').val();
-    if (!name || !roomID) {
-      alert('Please enter your name and game ID.');
-      return;
+  function joinRoom() {
+    const roomId = this.id.substr(5, this.id.length-5)
+    player.setPlayerType(P2);
+    socket.emit('joinGame', { name: player.name, room: this.id });
+    
+    //player = new Player(player.name, P2);
+  };
+
+  socket.on('updateRooms', (data) => {
+    const rooms = $('#lobby .rooms');
+    for(room of data.rooms) {
+      element = `<div class="room" id="${room}">${room}<button class="joinRoom">Join Game</button></div>`;
+      rooms.append(element)
+      $("#" + room).on('click', joinRoom)
     }
-    socket.emit('joinGame', { name, room: roomID });
-    player = new Player(name, P2);
   });
 
   // New Game created by current client. Update the UI and create new Game var.
   socket.on('newGame', (data) => {
+    console.log("game created " + data.name);
     const message =
       `Hello, ${data.name}. Please ask your friend to enter Game ID: 
       ${data.room}. Waiting for player 2...`;
@@ -229,6 +262,7 @@
 	 * This event is received when opponent connects to the room.
 	 */
   socket.on('player1', (data) => {
+    console.log("opponent connected the room");
     const message = `Hello, ${player.getPlayerName()}`;
     $('#userHello').html(message);
     player.setCurrentTurn(true);
@@ -239,6 +273,7 @@
 	 * This event is received when P2 successfully joins the game room. 
 	 */
   socket.on('player2', (data) => {
+    console.log("you have connected the room");
     const message = `Hello, ${data.name}`;
 
     // Create game for player 2
