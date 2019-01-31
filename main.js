@@ -22,8 +22,8 @@
     // Set the bit of the move played by the player
     // tileValue - Bitmask used to set the recently played move.
     updatePlaysArr(tileValue) {
-      console.log("movment: ") 
-      console.log(titleValue)
+      //console.log("movment: ") 
+      console.log(titleValue)   
       this.playsArr += tileValue;
     }
 
@@ -208,7 +208,6 @@
 
   // submit nick and enter into server
   $('#home > .enter').on('click', () => {
-    console.log("jest click")
     const name = $('#home > .nameNew').val();
     if (!name) {
       alert('Please enter your name.');
@@ -220,6 +219,29 @@
     player = new Player(name, P1);
   });
 
+  // send global message
+  $('#lobby > .sendGlobalMessage').on('click', () => {
+    const msg = $('#lobby > .chatInput').val();
+    console.log("message: "+ msg + " was sent")
+    socket.emit('global chat message', msg);
+  });
+  // send room message
+  $('.gameBoard > .sendRoomMessage').on('click', () => {
+    //console.log("dfadgdefgerggrgrw");
+    const msg = $('.gameBoard > .chatInput').val();
+    //$('#lobby > .messages').append($('<li>').text(msg));
+    console.log("message: " + msg + " will be sent into room: " + game.roomId)
+    socket.emit('room chat message', {message:msg, room: game.roomId });
+  });
+  // catch global chat message
+  socket.on('global chat message', function(msg){
+    $('#lobby > .messages').append($('<li>').text(msg));
+  });
+  // catch global chat message
+  socket.on('room chat message', function(msg){
+    console.log('client recived message')
+    $('.gameBoard > .messages').append($('<li>').text(msg));
+  });
   // Create a new game. Emit newGame event.
   $('#lobby .createRoom').on('click', () => {
     console.log("game created by: "+ player.name )

@@ -25,6 +25,7 @@ io.on('connection', (socket) => {
     socket.on('createGame', (data) => {
         console.log("game created " + data.name)
         const roomName = `room-${roomsCounter}`;
+        console.log(roomName);
         rooms.push(roomName)
         socket.join(`room-${++roomsCounter}`);
         socket.emit('newGame', { name: data.name, room: roomName});
@@ -33,6 +34,7 @@ io.on('connection', (socket) => {
     // Connect the Player 2 to the room he requested. Show error if room full.
     socket.on('joinGame', function (data) {
         socket.join(data.room);
+        console.log('joined to: ' + data.room)
         socket.broadcast.to(data.room).emit('player1', {});
         socket.emit('player2', { name: data.name, room: data.room })
     });
@@ -50,15 +52,13 @@ io.on('connection', (socket) => {
        * Handle the turn played by either player and notify the other.
        */
     socket.on('playTurn', (data) => {
+        console.log("turn played in: "+data.room)
         socket.broadcast.to(data.room).emit('turnPlayed', {
             tile: data.tile,
             room: data.room
         });
     });
 
-    /*socket.on('joinServer', (data) => {
-       
-    });*/
     /**
        * Notify the players about the victor.
        */
@@ -66,8 +66,16 @@ io.on('connection', (socket) => {
         socket.broadcast.to(data.room).emit('gameEnd', data);
     });
 
-    socket.on('chat message', function(msg){
-        io.emit('chat message', msg);
+    socket.on('global chat message', (msg) => {
+        io.emit('global chat message', msg);
+    });
+
+    socket.on('room chat message', (data) => {
+        console.log("room message recived from: "+ data.room);
+        console.log("message text: "+ data.message);
+        //socket.join(data.room);
+        io.sockets.in(data.room).emit('room chat message', data.message);
+        //socket.broadcast.to(data.room).emit('room chat message', data.message);
     });
 });
 
