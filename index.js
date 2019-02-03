@@ -5,8 +5,8 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-let roomsCounter = 0;
 let rooms = [];
+let messages = []
 
 app.use(express.static('.'));
 
@@ -23,11 +23,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createGame', (data) => {
-        console.log("game created " + data.name)
-        const roomName = `room-${roomsCounter}`;
-        console.log(roomName);
+        const roomName = `room-${rooms.length}`;
         rooms.push(roomName)
-        socket.join(`room-${++roomsCounter}`);
+        socket.join(roomName);
         socket.emit('newGame', { name: data.name, room: roomName});
     });
 
@@ -71,6 +69,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('room chat message', (data) => {
+      console.log(data)
         console.log("room message recived from: "+ data.room);
         console.log("message text: "+ data.message);
         //socket.join(data.room);
