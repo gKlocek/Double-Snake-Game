@@ -23,7 +23,7 @@
     // tileValue - Bitmask used to set the recently played move.
     updatePlaysArr(tileValue) {
       //console.log("movment: ") 
-      console.log(titleValue)   
+      //console.log(titleValue)   
       this.playsArr += tileValue;
     }
 
