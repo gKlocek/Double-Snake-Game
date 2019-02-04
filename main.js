@@ -239,7 +239,7 @@
   });
   // catch global chat message
   socket.on('room chat message', function(msg){
-    console.log('client recived message')
+    console.log('client ' + player.type +'recived message')
     $('.gameBoard > .messages').append($('<li>').text(msg));
   });
   // Create a new game. Emit newGame event.

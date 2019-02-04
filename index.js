@@ -71,10 +71,30 @@ io.on('connection', (socket) => {
     });
 
     socket.on('room chat message', (data) => {
+        console.log(JSON.stringify(data));
+        var BreakException = {message: 'to many iterations'};
+        i = 0;
+        try {
+            var clients = io.sockets.adapter.rooms['Room Name'].sockets;   
+            //to get the number of clients
+            var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+            console.log(numClients);
+            for (var clientId in clients ) {
+                //this is the socket of each client in the room.
+                var clientSocket = io.sockets.connected[clientId];
+                //you can do whatever you need with this
+                clientSocket.emit('new event', "Updates");
+            }
+        } catch (e) {
+            console.log(JSON.stringify(e));
+        }
+        //console.log("in that room we have ")
         console.log("room message recived from: "+ data.room);
         console.log("message text: "+ data.message);
+    
         //socket.join(data.room);
-        io.sockets.in(data.room).emit('room chat message', data.message);
+        //io.emit('room chat message', data.message);
+        io.in(data.room).emit('room chat message', data.message);
         //socket.broadcast.to(data.room).emit('room chat message', data.message);
     });
 });
