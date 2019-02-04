@@ -6,7 +6,7 @@
 
   // const socket = io.connect('http://tic-tac-toe-realtime.herokuapp.com'),
   const socket = io.connect('http://localhost:5000');
-  
+
   class Player {
     constructor(name, type) {
       this.name = name;
@@ -22,8 +22,6 @@
     // Set the bit of the move played by the player
     // tileValue - Bitmask used to set the recently played move.
     updatePlaysArr(tileValue) {
-      //console.log("movment: ") 
-      //console.log(titleValue)   
       this.playsArr += tileValue;
     }
 
@@ -43,7 +41,7 @@
       const message = turn ? 'Your turn' : 'Waiting for Opponent';
       $('#turn').text(message);
     }
-    
+
     getPlayerName() {
       return this.name;
     }
@@ -187,7 +185,7 @@
       return this.moves >= 9;
     }
 
-    // Announce the winner if the current client has won. 
+    // Announce the winner if the current client has won.
     // Broadcast this on the room to let the opponent know.
     announceWinner() {
       const message = `${player.getPlayerName()} wins!`;
@@ -239,7 +237,7 @@
   });
   // catch global chat message
   socket.on('room chat message', function(msg){
-    console.log('client ' + player.type +'recived message')
+    console.log('client recived message')
     $('.gameBoard > .messages').append($('<li>').text(msg));
   });
   // Create a new game. Emit newGame event.
@@ -254,7 +252,7 @@
     const roomId = this.id.substr(5, this.id.length-5)
     player.setPlayerType(P2);
     socket.emit('joinGame', { name: player.name, room: this.id });
-    
+
     //player = new Player(player.name, P2);
   };
 
@@ -271,8 +269,9 @@
   socket.on('newGame', (data) => {
     console.log("game created " + data.name);
     const message =
-      `Hello, ${data.name}. Please ask your friend to enter Game ID: 
-      ${data.room}. Waiting for player 2...`;
+      `Hello, ${data.name}<br/>
+      ${data.room}.<br />
+      Waiting for player 2...`;
 
     // Create game for player 1
     game = new Game(data.room);
@@ -291,8 +290,8 @@
   });
 
   /**
-	 * Joined the game, so player is P2(O). 
-	 * This event is received when P2 successfully joins the game room. 
+	 * Joined the game, so player is P2(O).
+	 * This event is received when P2 successfully joins the game room.
 	 */
   socket.on('player2', (data) => {
     console.log("you have connected the room");
@@ -306,7 +305,7 @@
 
   /**
 	 * Opponent played his turn. Update UI.
-	 * Allow the current player to play now. 
+	 * Allow the current player to play now.
 	 */
   socket.on('turnPlayed', (data) => {
     const row = data.tile.split('_')[1][0];
@@ -324,7 +323,7 @@
   });
 
   /**
-	 * End the game on any err event. 
+	 * End the game on any err event.
 	 */
   socket.on('err', (data) => {
     game.endGame(data.message);

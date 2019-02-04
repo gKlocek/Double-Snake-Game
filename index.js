@@ -5,8 +5,8 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-let roomsCounter = 0;
 let rooms = [];
+let messages = []
 
 app.use(express.static('.'));
 
@@ -23,11 +23,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createGame', (data) => {
-        console.log("game created " + data.name)
-        const roomName = `room-${roomsCounter}`;
-        console.log(roomName);
+        const roomName = `room-${rooms.length}`;
         rooms.push(roomName)
-        socket.join(`room-${++roomsCounter}`);
+        socket.join(roomName);
         socket.emit('newGame', { name: data.name, room: roomName});
     });
 
@@ -71,30 +69,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('room chat message', (data) => {
-        console.log(JSON.stringify(data));
-        var BreakException = {message: 'to many iterations'};
-        i = 0;
-        try {
-            var clients = io.sockets.adapter.rooms['Room Name'].sockets;   
-            //to get the number of clients
-            var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
-            console.log(numClients);
-            for (var clientId in clients ) {
-                //this is the socket of each client in the room.
-                var clientSocket = io.sockets.connected[clientId];
-                //you can do whatever you need with this
-                clientSocket.emit('new event', "Updates");
-            }
-        } catch (e) {
-            console.log(JSON.stringify(e));
-        }
-        //console.log("in that room we have ")
+      console.log(data)
         console.log("room message recived from: "+ data.room);
         console.log("message text: "+ data.message);
-    
         //socket.join(data.room);
-        //io.emit('room chat message', data.message);
-        io.in(data.room).emit('room chat message', data.message);
+        io.sockets.in(data.room).emit('room chat message', data.message);
         //socket.broadcast.to(data.room).emit('room chat message', data.message);
     });
 });
