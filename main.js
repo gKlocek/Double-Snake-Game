@@ -219,14 +219,14 @@
 
   // send global message
   $('#lobby > .sendGlobalMessage').on('click', () => {
-    const msg = $('#lobby > .chatInput').val();
+    const msg = player.name + ': '+ $('#lobby > .chatInput').val();
     console.log("message: "+ msg + " was sent")
     socket.emit('global chat message', msg);
   });
   // send room message
   $('.gameBoard > .sendRoomMessage').on('click', () => {
     //console.log("dfadgdefgerggrgrw");
-    const msg = $('.gameBoard > .chatInput').val();
+    const msg = player.name + ': '+$('.gameBoard > .chatInput').val();
     //$('#lobby > .messages').append($('<li>').text(msg));
     console.log("message: " + msg + " will be sent into room: " + game.roomId)
     socket.emit('room chat message', {message:msg, room: game.roomId });
