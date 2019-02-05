@@ -43,6 +43,10 @@ io.on('connection', (socket) => {
         console.log('joined to: ' + data.room)
         socket.broadcast.to(data.room).emit('player1', {});
         socket.emit('player2', { name: data.name, room: data.room })
+        setTimeout(function(){
+            console.log('setTimeout launched on room: '+ data.room);
+            started[data.room] = true;
+        },1000);
     });
 
     socket.on('movePlayed', function(data){
@@ -67,7 +71,7 @@ io.on('connection', (socket) => {
     })
 
     setInterval(function(){
-        for(var i=1; i<=rooms2; i++) {
+        for(var i=0; i<rooms2; i++) {
 
             id='room-'+i;
             if (!ended[id]&&started[id])

@@ -462,37 +462,41 @@ Game.prototype.announceWinner = function(data){
   */
 
  $(document).keydown(function(e) {
-  switch(e.which) {
-      case 37: // left
-      if (player.getLastMove() != 39)
-      {
-          socket.emit('movePlayed', {room: game.getRoomId(), move: 37, player1: player.getPlayer1()})
-      }
-      break;
+    if (player.getPlayer1())
+        lastmoveplayed=player.getLastMove();
+    else
+        lastmoveplayed=player.getLastMove2();
+    switch(e.which) {
+        case 37: // left
+        if (lastmoveplayed != 39)
+        {
+            socket.emit('movePlayed', {room: game.getRoomId(), move: 37, player1: player.getPlayer1()})
+        }
+        break;
 
-      case 38: // up
-      if (player.getLastMove() != 40)
-      {
-          socket.emit('movePlayed', {room: game.getRoomId(), move: 38, player1: player.getPlayer1()})
-      }
-      break;
+        case 38: // up
+        if (lastmoveplayed != 40)
+        {
+            socket.emit('movePlayed', {room: game.getRoomId(), move: 38, player1: player.getPlayer1()})
+        }
+        break;
 
-      case 39: // right
-      if (player.getLastMove() != 37)
-      {
-          socket.emit('movePlayed', {room: game.getRoomId(), move: 39, player1: player.getPlayer1()})
-      }
-      break;
+        case 39: // right
+        if (lastmoveplayed != 37)
+        {
+            socket.emit('movePlayed', {room: game.getRoomId(), move: 39, player1: player.getPlayer1()})
+        }
+        break;
 
-      case 40: // down
-      if (player.getLastMove() != 38)
-      {
-          socket.emit('movePlayed', {room: game.getRoomId(), move: 40, player1: player.getPlayer1()})
-      }
-      break;
+        case 40: // down
+        if (lastmoveplayed != 38)
+        {
+            socket.emit('movePlayed', {room: game.getRoomId(), move: 40, player1: player.getPlayer1()})
+        }
+        break;
 
-      default: return; // exit this handler for other keys
-  }
+        default: return; // exit this handler for other keys
+    }
   e.preventDefault(); // prevent the default action (scroll / move caret) 
   });
   /**
