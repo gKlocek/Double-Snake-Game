@@ -7,6 +7,13 @@ const io = require('socket.io')(server);
 
 let rooms = [];
 let messages = []
+///////////////////////////////////////////////////
+var rooms2 = 0;
+var player1move = [];
+var player2move = [];
+var apple = [];
+var ended = [];
+var started = [];
 
 app.use(express.static('.'));
 
@@ -23,6 +30,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createGame', (data) => {
+        rooms2++;
         const roomName = `room-${rooms.length}`;
         rooms.push(roomName)
         socket.join(roomName);
@@ -36,26 +44,44 @@ io.on('connection', (socket) => {
         socket.broadcast.to(data.room).emit('player1', {});
         socket.emit('player2', { name: data.name, room: data.room })
     });
-    /*socket.on('joinGame', function (data) {
-        var room = io.nsps['/'].adapter.rooms[data.room];
-        if (room && room.length === 1) {
-            socket.join(data.room);
-            socket.broadcast.to(data.room).emit('player1', {});
-            socket.emit('player2', { name: data.name, room: data.room })
-        } else {
-            socket.emit('err', { message: 'Sorry, The room is full!' });
+
+    socket.on('movePlayed', function(data){
+        if (data.player1)
+        {
+            player1move[data.room]=data.move;
         }
-    });*/
-    /**
-       * Handle the turn played by either player and notify the other.
-       */
-    socket.on('playTurn', (data) => {
+        else
+        {
+            player2move[data.room]=data.move;
+        }
+    })
+    
+    function generateRandomNumber(min_value , max_value) 
+    {
+        return Math.floor(Math.random() * (max_value-min_value) + min_value) ;
+    }    
+    
+
+    socket.on('ateapple', function(data){
+        socket.broadcast.to(data.room).emit('updateapple', {x:data.x, y:data.y});
+    })
+
+    setInterval(function(){
+        for(var i=1; i<=rooms2; i++) {
+
+            id='room-'+i;
+            if (!ended[id]&&started[id])
+                socket.broadcast.to(id).emit('snake', {p1move: player1move[id], p2move: player2move[id], apple : apple[id]});
+        }
+    }, 1000/10);
+
+    /*socket.on('playTurn', (data) => {
         console.log("turn played in: "+data.room)
         socket.broadcast.to(data.room).emit('turnPlayed', {
             tile: data.tile,
             room: data.room
         });
-    });
+    });*/
 
     /**
        * Notify the players about the victor.

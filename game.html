@@ -56,32 +56,29 @@
 				<button class="sendGlobalMessage">Send</button>
 			</div>
 
-			<div class="gameBoard" style="display: none;">
+			<div class="gameBoard">
 				<h2 id="userHello"></h2>
 				<h3 id="turn"></h3>
-				<table class="center">
-					<tr>
-						<td><button class="tile" id="button_00"></button></td>
-						<td><button class="tile" id="button_01"></button></td>
-						<td><button class="tile" id="button_02"></button></td>
-					</tr>
-					<tr>
-						<td><button class="tile" id="button_10"></button></td>
-						<td><button class="tile" id="button_11"></button></td>
-						<td><button class="tile" id="button_12"></button></td>
-					</tr>
-					<tr>
-						<td><button class="tile" id="button_20"></button></td>
-						<td><button class="tile" id="button_21"></button></td>
-						<td><button class="tile" id="button_22"></button></td>
-					</tr>
-				</table>
-
+				<canvas id="gc" width="400" height="400"></canvas>
+			
+				<script>
+					px=py=10;
+					gs=tc=20;
+					ax=ay=15;
+					xv=yv=0;
+					trail=[];
+					tail = 5;
+					window.onload=function() {
+						canv=document.getElementById("gc");
+						ctx=canv.getContext("2d");
+						ctx.fillStyle="black";
+						ctx.fillRect(0,0,canv.width,canv.height);
+					
+					}
+				</script>
 				<ul class="messages"></ul>
 				<input type="text" name="name" class="chatInput" placeholder="enter your message" required>
 				<button class="sendRoomMessage">Send</button>
-
-	
 			</div>
 		</div>
 	
