@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
             if (!ended[id]&&started[id])
                 socket.broadcast.to(id).emit('snake', {p1move: player1move[id], p2move: player2move[id], apple : apple[id]});
         }
-    }, 1000/10);
+    }, 1000/2);
 
     /*socket.on('playTurn', (data) => {
         console.log("turn played in: "+data.room)
