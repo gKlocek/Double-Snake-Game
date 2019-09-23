@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Double-Snake-Game</title>
+		<link rel="stylesheet" href="main.css">
+		<link rel="stylesheet" href="node_modules/skeleton-css/css/skeleton.css">
+		<style>
+			* { margin: 0; padding: 0; box-sizing: border-box; }
+			body { font: 13px Helvetica, Arial; }
+			form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+			form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+			form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+			#messages { list-style-type: none; margin: 0; padding: 0; }
+			#messages li { padding: 5px 10px; }
+			#messages li:nth-child(odd) { background: #eee; }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="home"> 
+					<h4>Create a new Game</h4>
+					<input type="text" name="name" class="nameNew" placeholder="Enter your name" required>
+					<button class="enter">Enter</button>					
+			</div>
+
+			<div id="lobby" style="display: none;">
+				<h1>Tic - Tac - Toe</h1>
+				<h3>How To Play</h3>
+				<ol>
+					<li>Player 1 Create a new game by entering the username </li>
+					<li>Player 2 Enter another username and the room id that is displayed on first window.</li>
+					<li>Click on join game. </li>
+				</ol>
+				<h4>Create a new Game</h4>
+				<button class="createRoom">New Game</button>
+				<br><br>
+				<h4>Join an existing game</h4>
+				<div class="rooms">
+				</div>
+				
+				<ul class="messages"></ul>
+				<input type="text" name="name" class="chatInput" placeholder="enter your message" required>
+				<button class="sendGlobalMessage">Send</button>
+			</div>
+
+			<div class="gameBoard">
+				<h2 id="userHello"></h2>
+				<h3 id="turn"></h3>
+				<canvas id="gc" width="400" height="400"></canvas>
+			
+				<script>
+					px=py=10;
+					gs=tc=20;
+					ax=ay=15;
+					xv=yv=0;
+					trail=[];
+					tail = 5;
+					window.onload=function() {
+						canv=document.getElementById("gc");
+						ctx=canv.getContext("2d");
+						ctx.fillStyle="black";
+						ctx.fillRect(0,0,canv.width,canv.height);
+					
+					}
+				</script>
+				<ul class="messages"></ul>
+				<input type="text" name="name" class="chatInput" placeholder="enter your message" required>
+				<button class="sendRoomMessage">Send</button>
+			</div>
+		</div>
+	
+		<script src="node_modules/jquery/dist/jquery.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="main.js"></script>
+	
+	</body>
+</html>
